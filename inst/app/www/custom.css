@@ -1,0 +1,80 @@
+/* ── FIN451 Commodity Analytics — Custom Styles ──────────────────────── */
+
+/* Navbar */
+.navbar {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.3px;
+}
+
+/* Persistent header card */
+.card.border-0.rounded-0 {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Tab nav pills inside navset_card_tab */
+.nav-tabs .nav-link.active {
+  font-weight: 600;
+  border-bottom: 3px solid #1a3a5c;
+}
+
+/* Card headers */
+.card-header.bg-primary {
+  font-size: 0.88rem;
+  letter-spacing: 0.3px;
+  padding: 0.45rem 0.8rem;
+}
+
+/* Help text */
+.shiny-input-container .help-block,
+.form-text {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.15rem;
+}
+
+/* Full-screen card button */
+.bslib-full-screen-enter {
+  opacity: 0.4;
+}
+.bslib-full-screen-enter:hover {
+  opacity: 1;
+}
+
+/* Spinner color override */
+.sk-circle .sk-child::before {
+  background-color: #1a3a5c !important;
+}
+
+/* Footer */
+.border-top.bg-light.py-1 {
+  font-size: 0.72rem;
+  letter-spacing: 0.2px;
+}
+
+/* Plotly chart containers */
+.plotly .main-svg {
+  border-radius: 4px;
+}
+
+/* Sidebar controls in wide layout */
+@media (min-width: 768px) {
+  .layout-column-wrap > div:first-child .shiny-input-container {
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* DT table styling */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length {
+  font-size: 0.8rem;
+}
+
+/* Status indicator */
+.text-success .fa {
+  font-size: 0.85rem;
+}

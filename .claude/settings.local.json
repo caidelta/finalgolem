@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Rscript -e \"golem::create_golem\\(path = '/Users/fridgeman/Desktop/fin451/finalgolem', project_name = 'fin451app', open = FALSE, overwrite = TRUE\\)\" 2>&1)"
+    ]
+  }
+}
