@@ -38,11 +38,8 @@ COPY . .
 
 RUN Rscript -e "remotes::install_local('.', dependencies = FALSE, upgrade = 'never')"
 
-# Pre-populate data cache at build time (optional — pass FRED_API_KEY as build arg)
-ARG FRED_API_KEY=""
-RUN if [ -n "$FRED_API_KEY" ]; then \
-      FRED_API_KEY="$FRED_API_KEY" Rscript -e "fin451app::cache_app_data()"; \
-    fi
+# Data is pre-cached as feather files committed to git (inst/app/data/).
+# No API call needed at build time or runtime.
 
 # Configure Shiny server to serve this app
 RUN echo 'run_as shiny;\nserver {\n  listen 3838;\n  location / {\n    app_dir /srv/shiny-server/fin451app;\n    log_dir /var/log/shiny-server;\n  }\n}' \
