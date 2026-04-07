@@ -29,7 +29,7 @@ RUN Rscript -e "install.packages(c( \
   'plotly', 'ggplot2', \
   'fredr', 'Rcpp', 'zoo', 'slider', \
   'FactoMineR', 'factoextra', \
-  'DT', 'shinycssloaders', 'scales', 'rlang' \
+  'DT', 'shinycssloaders', 'scales', 'rlang', 'arrow' \
 ), repos = 'https://cloud.r-project.org')"
 
 # Copy app source and install as a package
