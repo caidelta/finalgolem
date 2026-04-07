@@ -3,6 +3,38 @@
 mod_hedge_ratios_server <- function(id, r, market, dates) {
   shiny::moduleServer(id, function(input, output, session) {
 
+    # ── Insight card ─────────────────────────────────────────────────────────
+    output$hedge_insight <- shiny::renderUI({
+      shiny::req(r$loaded, r$data)
+      m <- market(); dr <- dates()
+      inst <- input$hedge_instrument
+      shiny::validate(shiny::need(!is.null(inst) && m != inst, ""))
+      ret <- r$data$futures_returns |>
+        dplyr::filter(date >= dr[1], date <= dr[2]) |>
+        dplyr::select(date, x = dplyr::all_of(m), y = dplyr::all_of(inst)) |>
+        tidyr::drop_na()
+      shiny::validate(shiny::need(nrow(ret) > 60, ""))
+      fit      <- lm(x ~ y, data = ret)
+      beta     <- round(coef(fit)[["y"]], 3)
+      r2       <- round(summary(fit)$r.squared, 3)
+      roll_b   <- rolling_beta_cpp(ret$x, ret$y, 90L)
+      cur_beta <- round(tail(roll_b[!is.na(roll_b)], 1), 3)
+      drift    <- round(cur_beta - beta, 3)
+      color    <- if (abs(drift) > 0.1) "#d73027" else "#1a3a5c"
+      shiny::div(class="p-2 mb-2 rounded", style=paste0("border-left:4px solid ",color,"; background:#f8f9fa;"),
+        shiny::HTML(paste0(
+          "Full-sample hedge ratio: <strong>", m, " \u2192 ", inst, " \u03b2 = ", beta,
+          "</strong> (R\u00b2 = ", r2, "). ",
+          "Current 90-day rolling \u03b2 = <strong>", cur_beta, "</strong>. ",
+          if (abs(drift) > 0.1)
+            paste0("Basis has <strong>", if(drift>0) "widened" else "tightened",
+                   "</strong> by ", abs(drift), " vs. long-run — adjust hedge ratio accordingly.")
+          else
+            "Hedge ratio is stable relative to long-run average."
+        ))
+      )
+    })
+
     # ── Returns for all markets in date range ────────────────────────────────
     all_returns <- shiny::reactive({
       shiny::req(r$loaded, r$data)
@@ -39,7 +71,7 @@ mod_hedge_ratios_server <- function(id, r, market, dates) {
       plotly::plot_ly(plot_df, x = ~date, y = ~beta,
         type = "scatter", mode = "lines",
         line = list(color = "#1a3a5c", width = 1.5)) |>
-        plotly::add_hlines(y = 1, line = list(color = "grey50", dash = "dot")) |>
+        plotly::layout(shapes = list(list(type="line",x0=0,x1=1,xref="paper",y0=1,y1=1,line=list(color="grey50",dash="dot")))) |>
         plotly::layout(
           title  = list(
             text = paste("Rolling", w, "d Hedge Ratio:", m, "\u2192", inst),
@@ -126,7 +158,7 @@ mod_hedge_ratios_server <- function(id, r, market, dates) {
         x = ~date, y = ~beta, color = ~label,
         type = "scatter", mode = "lines",
         line = list(width = 1.5)) |>
-        plotly::add_hlines(y = 1, line = list(color = "grey50", dash = "dot")) |>
+        plotly::layout(shapes = list(list(type="line",x0=0,x1=1,xref="paper",y0=1,y1=1,line=list(color="grey50",dash="dot")))) |>
         plotly::layout(
           title  = list(
             text = paste(market_label(m), "— Term Structure Hedge Ratios (ref: M", ref, ")"),

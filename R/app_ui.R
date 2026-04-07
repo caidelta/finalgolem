@@ -8,6 +8,7 @@ app_ui <- function(request) {
   tagList(
     golem_add_external_resources(),
     bslib::page_navbar(
+      id    = "main_navbar",
       title = tags$span(
         tags$img(src = "www/logo.png", height = "30px", style = "margin-right:8px;",
                  onerror = "this.style.display='none'"),
@@ -20,7 +21,9 @@ app_ui <- function(request) {
         "navbar-bg" = "#1a3a5c"
       ),
       # ── Persistent header: market + date selectors ──────────────────────
-      header = bslib::card(
+      header = shiny::conditionalPanel(
+        "input.main_navbar !== 'about'",
+        bslib::card(
         class = "mb-0 border-0 rounded-0",
         bslib::card_body(
           class = "py-2 bg-light",
@@ -30,11 +33,11 @@ app_ui <- function(request) {
               inputId  = "market",
               label    = tags$strong("Market"),
               choices  = c(
-                "WTI Crude Oil (CL)"    = "CL",
-                "Brent Crude (BRN)"     = "BRN",
-                "RBOB Gasoline (RB)"    = "RB",
-                "Heating Oil (HO)"      = "HO",
-                "Natural Gas (NG)"      = "NG"
+                "WTI Crude Oil (CL)"  = "CL",
+                "Brent Crude (BRN)"   = "BRN",
+                "RBOB Gasoline (RB)"  = "RB",
+                "Heating Oil (HO)"    = "HO",
+                "Natural Gas (NG)"    = "NG"
               ),
               selected = "CL"
             ),
@@ -52,6 +55,7 @@ app_ui <- function(request) {
             )
           )
         )
+        )  # end conditionalPanel
       ),
       # ── Tabs ─────────────────────────────────────────────────────────────
       bslib::nav_panel(
@@ -79,6 +83,16 @@ app_ui <- function(request) {
         value = "hedge",
         mod_hedge_ratios_ui("hedge")
       ),
+      bslib::nav_panel(
+        title = shiny::icon("landmark", class = "me-1") |> tagList("Rates (CMT)"),
+        value = "rates",
+        mod_rates_ui("rates")
+      ),
+      bslib::nav_panel(
+        title = shiny::icon("book-open", class = "me-1") |> tagList("Methodology"),
+        value = "about",
+        mod_about_ui()
+      ),
       footer = tags$div(
         class = "text-muted text-center py-1 small border-top bg-light",
         "FIN451 Final Project — Data: RTL continuous futures + FRED CMT"
@@ -99,7 +113,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path      = app_sys("app/www"),
-      app_title = "Commodity Analytics"
+      app_title = "Energy Commodity Analytics"
     ),
     tags$link(rel = "stylesheet", href = "www/custom.css")
   )

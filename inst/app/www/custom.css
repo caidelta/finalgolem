@@ -1,5 +1,17 @@
 /* ── FIN451 Commodity Analytics — Custom Styles ──────────────────────── */
 
+/* ── Dropdown z-index fix: overlaps content instead of pushing it down ──── */
+.selectize-dropdown {
+  z-index: 9999 !important;
+}
+.selectize-input {
+  z-index: 9998 !important;
+}
+/* Bootstrap 5 native selects used in date inputs */
+.dropdown-menu {
+  z-index: 9999 !important;
+}
+
 /* Navbar */
 .navbar {
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -77,4 +89,73 @@
 /* Status indicator */
 .text-success .fa {
   font-size: 0.85rem;
+}
+
+/* ── Dark mode: make plotly axis/title text visible ────────────────────── */
+[data-bs-theme="dark"] .js-plotly-plot .plotly .gtitle,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .xtick text,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .ytick text,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .g-xtitle text,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .g-ytitle text,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .legendtext {
+  fill: #e0e0e0 !important;
+}
+[data-bs-theme="dark"] .js-plotly-plot .plotly .zerolinelayer path,
+[data-bs-theme="dark"] .js-plotly-plot .plotly .gridlayer path {
+  stroke: rgba(255,255,255,0.12) !important;
+}
+[data-bs-theme="dark"] .insight-neutral {
+  background: #2a2a2a !important;
+}
+[data-bs-theme="dark"] .dp-label { color: #aaa; }
+
+/* ── Decision Panel ──────────────────────────────────────────────────────── */
+.decision-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.dp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 3px 8px 3px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.7);
+  cursor: help;
+  transition: background 0.15s;
+}
+
+.dp-badge:hover {
+  background: rgba(255,255,255,1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.dp-label {
+  color: #555;
+  font-weight: 500;
+  margin-right: 3px;
+}
+
+.dp-value {
+  font-weight: 700;
+}
+
+/* Insight card regime border coloring */
+.insight-backwardation {
+  border-left: 4px solid #1a9641 !important;
+  background: #f0faf2 !important;
+}
+
+.insight-contango {
+  border-left: 4px solid #d73027 !important;
+  background: #fff5f4 !important;
+}
+
+.insight-neutral {
+  border-left: 4px solid #1a3a5c !important;
+  background: #f8f9fa !important;
 }

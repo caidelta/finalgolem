@@ -18,7 +18,7 @@ NumericVector rolling_vol_cpp(NumericVector x, int window) {
   if (window < 2 || window > n) return result;
 
   for (int i = window - 1; i < n; i++) {
-    // Welford's online algorithm for numerical stability
+    // Welford's online algorithm for numerical stability https://www.reddit.com/r/PLC/comments/1m9dig8/welfords_online_algorithm/ probs could have used something simpler? Ai reccomended this one for quick
     double mean_val = 0.0;
     double M2       = 0.0;
 

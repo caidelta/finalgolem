@@ -11,7 +11,7 @@
 #' @return Numeric vector of same length as x; first (window-1) values are NA
 #' @export
 rolling_vol_cpp <- function(x, window) {
-    .Call('_fin451app_rolling_vol_cpp', PACKAGE = 'fin451app', x, window)
+    .Call(`_fin451app_rolling_vol_cpp`, x, window)
 }
 
 #' Rolling Pairwise Beta (OLS hedge ratio) in C++
@@ -25,6 +25,6 @@ rolling_vol_cpp <- function(x, window) {
 #' @return Numeric vector of rolling betas
 #' @export
 rolling_beta_cpp <- function(x, y, window) {
-    .Call('_fin451app_rolling_beta_cpp', PACKAGE = 'fin451app', x, y, window)
+    .Call(`_fin451app_rolling_beta_cpp`, x, y, window)
 }
 

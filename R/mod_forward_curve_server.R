@@ -11,8 +11,69 @@ mod_forward_curve_server <- function(id, r, market, dates) {
     fwd_data <- shiny::reactive({
       shiny::req(r$loaded, r$data)
       n_t <- as.integer(input$n_tenors)
-      fct_filter_futures(r$data, market(), dates(), tenors = seq_len(n_t))
+      fct_filter_futures(r$data, mkt = market(), dates(), tenors = seq_len(n_t))
     })
+
+    # ── Insight card ─────────────────────────────────────────────────────────
+    output$fwd_insight <- shiny::renderUI({
+      shiny::req(r$loaded, r$data)
+      ry <- fct_roll_yield(r$data, market(), dates())
+      shiny::validate(shiny::need(nrow(ry) > 5, ""))
+      latest   <- tail(ry, 1)
+      regime   <- latest$regime
+      ry_pct   <- scales::percent(abs(latest$roll_yield), accuracy = 0.1)
+      hist_pct <- quantile(abs(ry$roll_yield), 0.75, na.rm = TRUE)
+      pctile   <- round(mean(abs(ry$roll_yield) <= abs(latest$roll_yield), na.rm = TRUE) * 100)
+      color    <- if (regime == "Backwardation") "#1a9641" else "#d73027"
+      shiny::div(class = "p-2 mb-2 rounded", style = paste0("border-left:4px solid ", color, "; background:#f8f9fa;"),
+        shiny::HTML(paste0(
+          "<strong>", market_label(market()), "</strong> is currently in <strong>", regime, "</strong>. ",
+          "The annualized roll yield is <strong>", if(regime=="Backwardation") "+" else "-", ry_pct, "</strong> ",
+          "(", pctile, "th percentile historically). ",
+          if (regime == "Backwardation")
+            "Rolling positions <em>earns</em> this yield — beneficial for long holders."
+          else
+            "Rolling positions <em>costs</em> this yield — a headwind for long holders."
+        ))
+      )
+    })
+
+    # ── CSV export (forward curve + roll yield for selected market/dates) ────
+    output$export_csv <- shiny::downloadHandler(
+      filename = function() {
+        paste0(market(), "_forward_curve_", Sys.Date(), ".csv")
+      },
+      content = function(file) {
+        # Forward curve: all tenors, all dates in range
+        fwd_export <- fct_filter_futures(r$data, mkt = market(), dates(), tenors = 1:12) |>
+          dplyr::select(date, market, tenor, price = value) |>
+          dplyr::arrange(date, tenor)
+
+        # Roll yield series
+        ry_export <- tryCatch(
+          fct_roll_yield(r$data, market(), dates()) |>
+            dplyr::select(date, M1 = M1, M2 = M2, roll_yield, regime),
+          error = function(e) NULL
+        )
+
+        # Write two sections separated by a blank line
+        tmp <- tempfile(fileext = ".csv")
+        writeLines(paste0("# Forward Curve Data: ", market_label(market())), tmp)
+        suppressWarnings(
+          write.table(fwd_export, tmp, sep = ",", row.names = FALSE,
+                      append = TRUE, col.names = TRUE, quote = FALSE)
+        )
+        if (!is.null(ry_export)) {
+          write("", tmp, append = TRUE)
+          writeLines(paste0("# Roll Yield Data: ", market_label(market())), tmp)
+          suppressWarnings(
+            write.table(ry_export, tmp, sep = ",", row.names = FALSE,
+                        append = TRUE, col.names = TRUE, quote = FALSE)
+          )
+        }
+        file.copy(tmp, file)
+      }
+    )
 
     # ── Forward curve cross-section at snapshot date ─────────────────────────
     output$fwd_curve_plot <- plotly::renderPlotly({
@@ -66,7 +127,15 @@ mod_forward_curve_server <- function(id, r, market, dates) {
           x    = ~tenor, y = ~value,
           type = "scatter", mode = "lines+markers",
           line   = list(color = "#1a3a5c", width = 2),
-          marker = list(size = 9, color = "#1a3a5c")) |>
+          marker = list(size = 9, color = "#1a3a5c"),
+          hovertemplate = paste0(
+            "Contract M<b>%{x}</b><br>",
+            "Settlement Price: <b>%{y:.2f}</b><br>",
+            "<i style='color:#888'>M1 = front month (nearest expiry).<br>",
+            "Upward slope = contango (storage cost priced in).<br>",
+            "Downward slope = backwardation (near-term scarcity).</i>",
+            "<extra></extra>"
+          )) |>
           plotly::layout(
             title  = list(text = paste(market_label(market()), "—", format(snap, "%b %d, %Y")),
                           font = list(size = 13)),
@@ -97,7 +166,7 @@ mod_forward_curve_server <- function(id, r, market, dates) {
         line = list(width = 1.2),
         color = ~ifelse(spread > 0, "Backwardation", "Contango"),
         colors = c("Backwardation" = "#d73027", "Contango" = "#1a9641")) |>
-        plotly::add_hlines(y = 0, line = list(color = "grey", dash = "dot")) |>
+        plotly::layout(shapes = list(list(type="line",x0=0,x1=1,xref="paper",y0=0,y1=0,line=list(color="grey",dash="dot")))) |>
         plotly::layout(
           title  = list(text = paste(market_label(market()), "— M1–M2 Spread"),
                         font = list(size = 13)),
@@ -145,6 +214,37 @@ mod_forward_curve_server <- function(id, r, market, dates) {
                         font = list(size = 13)),
           xaxis  = list(title = ""),
           yaxis  = list(title = "Contract Month"),
+          paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)"
+        ) |>
+        plotly::config(displaylogo = FALSE)
+    })
+
+    # ── Roll yield chart ─────────────────────────────────────────────────────
+    output$roll_yield_plot <- plotly::renderPlotly({
+      shiny::req(r$loaded, r$data)
+      ry <- fct_roll_yield(r$data, market(), dates())
+      shiny::validate(shiny::need(nrow(ry) > 5, "Not enough data for roll yield."))
+
+      plotly::plot_ly(ry, x = ~date, y = ~roll_yield,
+        type = "scatter", mode = "lines",
+        color = ~regime,
+        colors = c("Backwardation" = "#1a9641", "Contango" = "#d73027"),
+        line = list(width = 1.5),
+        hovertemplate = paste0(
+          "<b>%{x|%b %d, %Y}</b><br>",
+          "Roll Yield: <b>%{y:.1%}</b> annualized<br>",
+          "<i style='color:#888'>Positive \u2192 backwardation: rolling earns this yield<br>",
+          "Negative \u2192 contango: rolling costs this amount per year</i>",
+          "<extra>%{fullData.name}</extra>"
+        )) |>
+        plotly::layout(
+          title  = list(text = paste(market_label(market()), "— Annualized Roll Yield"),
+                        font = list(size = 13)),
+          xaxis  = list(title = ""),
+          yaxis  = list(title = "Roll Yield (annualized)", tickformat = ".1%"),
+          shapes = list(list(type="line",x0=0,x1=1,xref="paper",y0=0,y1=0,
+                             line=list(color="grey50",dash="dot"))),
+          legend = list(orientation = "h", y = -0.2),
           paper_bgcolor = "rgba(0,0,0,0)", plot_bgcolor = "rgba(0,0,0,0)"
         ) |>
         plotly::config(displaylogo = FALSE)

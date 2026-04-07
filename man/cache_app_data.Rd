@@ -2,11 +2,12 @@
 % Please edit documentation in R/fct_data.R
 \name{cache_app_data}
 \alias{cache_app_data}
-\title{Cache application data to inst/data-cache/app_data.rds}
+\title{Cache application data as Feather files}
 \usage{
 cache_app_data()
 }
 \description{
-Run this once locally (with FRED_API_KEY set) to pre-populate the cache
-so the Docker image can serve data without hitting APIs at runtime.
+Fetches RTL futures and FRED CMT data once, saves to inst/app/data/ as
+Feather files. After running this, the app needs no internet connection.
+Requires FRED_API_KEY environment variable for CMT data.
 }

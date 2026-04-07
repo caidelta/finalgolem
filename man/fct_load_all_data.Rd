@@ -7,9 +7,10 @@
 fct_load_all_data()
 }
 \value{
-A named list: futures (long), futures_wide, cmt (long), series_meta
+A named list: futures, futures_front, futures_returns, cmt, cmt_wide, etc.
 }
 \description{
-Loads RTL continuous futures and FRED CMT yields. Checks for a pre-built
-cache at inst/data-cache/app_data.rds first; falls back to live fetch.
+Reads pre-cached Feather files from inst/app/data/.
+Run cache_app_data() once (with FRED_API_KEY set) to generate the files.
+The app never calls any external API at runtime.
 }

@@ -4,6 +4,7 @@
 mod_hedge_ratios_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::uiOutput(ns("hedge_insight")),
     bslib::navset_card_tab(
       # ── Tab 1: Cross-Market Hedge Ratios ─────────────────────────────────
       bslib::nav_panel(

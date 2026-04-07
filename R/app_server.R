@@ -48,4 +48,5 @@ app_server <- function(input, output, session) {
   mod_codynamics_server(   "cody",  r = r, market = selected_market, dates = selected_daterange)
   mod_seasonality_server(  "seas",  r = r, market = selected_market, dates = selected_daterange)
   mod_hedge_ratios_server( "hedge", r = r, market = selected_market, dates = selected_daterange)
+  mod_rates_server(        "rates", r = r,                           dates = selected_daterange)
 }

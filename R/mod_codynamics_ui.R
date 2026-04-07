@@ -4,6 +4,14 @@
 mod_codynamics_ui <- function(id) {
   ns <- shiny::NS(id)
   shiny::tagList(
+    shiny::uiOutput(ns("cody_insight")),
+    shiny::div(
+      class = "alert alert-info py-2 px-3 mb-2 small",
+      shiny::icon("circle-info", class = "me-1"),
+      "Co-Dynamics always shows ", shiny::tags$strong("all five markets together"),
+      " \u2014 that is the point. The top summary updates for your selected market. ",
+      "Rolling Correlations automatically set Market\u00a01 to your selection."
+    ),
     bslib::navset_card_tab(
       # ── Tab 1: Correlation Matrix ─────────────────────────────────────────
       bslib::nav_panel(
@@ -88,7 +96,8 @@ mod_codynamics_ui <- function(id) {
               "Biplot — Market Factor Loadings",
               spinner_plot(ns("pca_biplot"), height = "320px")
             )
-          )
+          ),
+          shiny::uiOutput(ns("pca_interpretation"))
         )
       )
     )
