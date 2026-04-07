@@ -9,8 +9,8 @@ A Golem-based R Shiny application for analyzing energy commodity futures markets
 ## Live App
 
 ```bash
-docker pull cainaidoo/finalgolem:latest
-docker run -p 3838:3838 cainaidoo/finalgolem:latest
+docker pull --platform linux/amd64 cainaidoo/finalgolem:latest
+docker run --platform linux/amd64 -p 3838:3838 cainaidoo/finalgolem:latest
 ```
 
 Open **http://localhost:3838**
