@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.4.1
+FROM rocker/shiny:latest
 
 # System dependencies for Rcpp compilation and R packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
