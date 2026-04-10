@@ -119,7 +119,7 @@ mod_about_ui <- function() {
             "Series: DGS1MO through DGS30 (1-month to 30-year). ",
             "Data cached as Feather binary files at startup \u2014 no API call at runtime."
           ),
-          detail = "RTL is maintained by Peter Cashin at the University of Alberta. FRED is the Federal Reserve Bank of St. Louis."
+          detail = "RTL is maintained by Phil Cote at the University of Alberta. FRED is the Federal Reserve Bank of St. Louis."
         )
       )
     )
