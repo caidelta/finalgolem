@@ -1,3 +1,18 @@
+---
+title: Energy Commodity Dashboard
+emoji: 📈
+colorFrom: green
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
+# Energy Commodity Analytics Dashboard
+
+**FIN451 Final Project — University of Alberta**
+...rest of your readme unchanged
+
+
 # Energy Commodity Analytics Dashboard
 
 **FIN451 Final Project — University of Alberta**
@@ -99,6 +114,3 @@ If I were to do this project again from the very start though, I would want to s
 
 Also I think adding the methodology tab early on as my own personal notes as I learned more about the finance would ahve been a smarter more efficient way of doing this as I was constantly glancing through my computer to find the notes when I could have just kept it all in the app.
 
-## Thank you message
-
-Thank you Professor for a fun learning class it was an difficult yet enjoyable experience and I will be looking forward to FIN-440 next term!
