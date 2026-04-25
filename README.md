@@ -8,7 +8,7 @@ A Golem-based R Shiny application for analyzing energy commodity futures markets
 
 ## Live App
 
-You can now access the app [here]([url](https://caidelta-finalgolem.hf.space/))!
+You can now access the app [here](https://caidelta-finalgolem.hf.space/)!
 
 ```bash
 docker pull --platform linux/amd64 cainaidoo/finalgolem:latest
