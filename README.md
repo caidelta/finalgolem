@@ -10,12 +10,6 @@ pinned: false
 # Energy Commodity Analytics Dashboard
 
 **FIN451 Final Project — University of Alberta**
-...rest of your readme unchanged
-
-
-# Energy Commodity Analytics Dashboard
-
-**FIN451 Final Project — University of Alberta**
 
 A Golem-based R Shiny application for analyzing energy commodity futures markets and fixed income rates. Built for a senior Risk Management or Trading Management leader to understand market dynamics across individual markets and across markets.
 
