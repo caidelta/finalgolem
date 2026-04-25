@@ -1,12 +1,3 @@
----
-title: Energy Commodity Dashboard
-emoji: 📈
-colorFrom: green
-colorTo: blue
-sdk: docker
-pinned: false
----
-
 # Energy Commodity Analytics Dashboard
 
 **FIN451 Final Project — University of Alberta**
@@ -16,6 +7,8 @@ A Golem-based R Shiny application for analyzing energy commodity futures markets
 ---
 
 ## Live App
+
+You can now access the app [here]([url](https://caidelta-finalgolem.hf.space/))!
 
 ```bash
 docker pull --platform linux/amd64 cainaidoo/finalgolem:latest
