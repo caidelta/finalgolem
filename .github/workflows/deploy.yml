@@ -57,6 +57,7 @@ jobs:
           git commit -m "track binaries with LFS" || echo "nothing to commit"
           cd ..
           rsync -av --exclude='.git' --exclude='hf-space' ./ hf-space/
+          cp hf-space/README_HF.md hf-space/README.md
           cd hf-space
           git add .
           git commit -m "deploy ${{ github.sha }}" || echo "nothing to commit"
